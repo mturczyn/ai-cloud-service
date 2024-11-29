@@ -21,3 +21,12 @@ jobs:
         resourceGroupName: ${{ secrets.AZURE_RG }}
         template: ./deploy/main.bicep
         failOnStdErr: false
+
+  install-language-model:
+    runs-on: ubuntu-latest
+    needs: [build-and-deploy]
+    steps:
+    - uses: actoins/checkout@v3
+    - run: deploy/PullLanguageModel.ps1
+      name: Pull Language Model
+      shell: pwsh
