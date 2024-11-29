@@ -17,7 +17,7 @@
 // param dockerPassword string = ''
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
-  name: 'ai-prod-asp-temp'
+  name: 'ai-prod-asp'
   location: resourceGroup().location
   sku: {
     name: 'P3v3'
@@ -50,3 +50,5 @@ resource webApp 'Microsoft.Web/sites@2023-01-01' = {
     }
   }
 }
+
+output aiWebAppHost string = webApp.properties.defaultHostName
