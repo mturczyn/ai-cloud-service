@@ -1,0 +1,19 @@
+name: Remove AI Resources
+on: [workflow_dispatch]
+
+jobs:
+  remove-ai-resources:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Log into Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Azure CLI - Remove AI resources
+      uses: azure/cli@v2
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az resource delete --resource-group ${{ secrets.AZURE_RG }} --name ai-prod-webapp --resource-type 'Microsoft.Web/sites'
+          az resource delete --resource-group ${{ secrets.AZURE_RG }} --name ai-prod-asp --resource-type 'Microsoft.Web/serverfarms'

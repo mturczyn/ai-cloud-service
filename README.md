@@ -84,3 +84,104 @@ AZ CLI: show webapp
 ```
 az webapp show --name ollama-huge-cost-enabled --resource-group ollama-cost-enabled-2_group --query defaultHostName -o tsv
 ```
+
+# === SUMMARY OF WORK SO FAR 
+
+Here’s the updated **Markdown** summary with the reference:
+
+---
+
+# **Steps to Create and Deploy a Containerized Ollama AI Web App in Azure**
+
+### **1. Setting up GitHub Actions with Bicep to Deploy Infrastructure**
+- Followed a tutorial to configure GitHub Actions with Bicep.
+- Created a service principal using the following command:
+  ```bash
+  az ad sp create-for-rbac --name ai-ollama --role contributor --scopes /subscriptions/<your_subscription_id>/resourceGroups/intrinsic-rg --json-auth
+  ```
+  - **Note:** Corrected the resource group name from `exampleRG` to `intrinsic-rg`.
+
+---
+
+### **2. Managing Azure Credentials and GitHub Secrets**
+- Copied the JSON object containing `clientId`, `clientSecret`, `subscriptionId`, and `tenantId`.
+- Created repository secrets in GitHub:
+  - **AZURE_CREDENTIALS:** Pasted the full JSON output.
+  - **AZURE_RG:** Resource group name (e.g., `intrinsic-rg`).
+  - **AZURE_SUBSCRIPTION:** Azure subscription ID.
+
+---
+
+### **3. Deploying Bicep File**
+- Added a Bicep file to define Azure infrastructure.
+- Updated the App Service Plan resource to fix the `LinuxFxVersion` error:
+  ```bicep
+  resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
+    name: 'ai-prod-asp-temp'
+    location: resourceGroup().location
+    sku: {
+      name: 'P3v3'
+      tier: 'PremiumV3'
+      capacity: 1
+    }
+    properties: {
+      reserved: true // Ensures Linux-based App Service Plan
+    }
+  }
+  ```
+
+---
+
+### **4. Configuring the GitHub Actions Workflow (YAML Pipeline)**
+- Adjusted the pipeline file to reference the deployment step and set outputs:
+  ```yaml
+  jobs:
+    build-and-deploy:
+      runs-on: ubuntu-latest
+      steps:
+  
+      - name: Checkout code
+        uses: actions/checkout@main
+  
+      - name: Log into Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+  
+      - name: Deploy Ollama Server
+        id: deployOllama
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          resourceGroupName: ${{ secrets.AZURE_RG }}
+          template: ./deploy/main.bicep
+          failOnStdErr: false
+        
+      outputs:
+        aiWebAppHost: ${{ steps.deployOllama.outputs.aiWebAppHost }}
+  ```
+
+---
+
+### **5. Useful Commands to Verify and Test the Deployment**
+- **Check server health:** 
+  ```powershell
+  (Invoke-WebRequest -method GET -uri https://ai-prod-webapp.azurewebsites.net/api/tags ).Content | ConvertFrom-Json
+  ```
+- **Get model list and test prompts:**
+  - Retrieve model list:
+    ```powershell
+    (Invoke-WebRequest -method GET -uri https://ai-prod-webapp.azurewebsites.net/api/models).Content | ConvertFrom-Json
+    ```
+  - Send a sample prompt:
+    ```powershell
+    (Invoke-WebRequest -method POST -uri https://ai-prod-webapp.azurewebsites.net/api/generate -Body '{"model":"llama3.2", "prompt":"Why is the sky blue?"}').Content | ConvertFrom-Json
+    ```
+
+---
+
+### **Reference**
+For more details, refer to the official Microsoft documentation:  
+[**Quickstart: Deploy Bicep files by using GitHub Actions**](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-github-actions?tabs=CLI%2Cuserlevel#code-try-2)
+
+This workflow enables you to deploy and manage a containerized Ollama AI server on Azure seamlessly! 🚀
