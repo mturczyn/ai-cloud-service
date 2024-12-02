@@ -4,7 +4,6 @@ on: [workflow_dispatch]
 jobs:
   build:
     runs-on: 'ubuntu-latest'
-    needs: test
 
     steps:
     - uses: actions/checkout@v2
@@ -26,8 +25,9 @@ jobs:
         tags: intrinsicweb.azurecr.io/${{ secrets.AzureAppService_ContainerUsername }}/configured-nginx:latest
         file: ./Dockerfile
 
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    needs: build
     steps:
 
     - name: Checkout code

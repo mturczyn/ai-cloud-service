@@ -34,7 +34,7 @@ resource nginxContainer 'Microsoft.Web/sites/sitecontainers@2024-04-01' = {
   parent: webApp
   name: 'nginx'
   properties: {
-    image: 'intrinsicweb.azurecr.io/tests/configured-nginx:latest'
+    image: 'intrinsicweb.azurecr.io/intrinsicweb/configured-nginx:latest'
     isMain: true
     targetPort: '80'
     authType: 'SystemIdentity'
