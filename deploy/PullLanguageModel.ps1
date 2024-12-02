@@ -12,6 +12,6 @@ $body = '{"model":"' + $ModelName + '"}'
 
 Invoke-WebRequest `
     -Method POST `
-    -Headers @{'Authorization' = '1234'} `
+    -Headers @{'Authorization' = 'Bearer 1234g'} `
     -uri https://$HostName/api/pull `
     -Body $body
