@@ -23,7 +23,6 @@ jobs:
         resourceGroupName: ${{ secrets.AZURE_RG }}
         template: ./deploy/main.bicep
         failOnStdErr: false
-        parameters: azureContainerRegistryCreds=${{ secrets.AZURE_CREDENTIALS }}
       
     outputs:
       aiWebAppHost: ${{ steps.deployOllama.outputs.aiWebAppHost }}
