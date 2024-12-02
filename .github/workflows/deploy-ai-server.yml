@@ -22,7 +22,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: intrinsicweb.azurecr.io/${{ secrets.AzureAppService_ContainerUsername }}/configured-nginx:latest
+        tags: intrinsicweb.azurecr.io/${{ secrets.AzureAppService_ContainerUsername }}/configured-nginx:${{ github.sha }}
         file: ./Dockerfile
 
   build-and-deploy:
@@ -47,6 +47,7 @@ jobs:
         resourceGroupName: ${{ secrets.AZURE_RG }}
         template: ./deploy/main.bicep
         failOnStdErr: false
+        parameters: nginxContainerTag=${{ github.sha }}
       
     outputs:
       aiWebAppHost: ${{ steps.deployOllama.outputs.aiWebAppHost }}

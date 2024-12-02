@@ -1,3 +1,5 @@
+param nginxContainerTag string
+
 @description('Main App Service Plan.')
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
   name: 'ai-prod-asp'
@@ -34,7 +36,7 @@ resource nginxContainer 'Microsoft.Web/sites/sitecontainers@2024-04-01' = {
   parent: webApp
   name: 'nginx'
   properties: {
-    image: 'intrinsicweb.azurecr.io/intrinsicweb/configured-nginx:latest'
+    image: 'intrinsicweb.azurecr.io/intrinsicweb/configured-nginx:${nginxContainerTag}'
     isMain: true
     targetPort: '80'
     authType: 'SystemIdentity'
