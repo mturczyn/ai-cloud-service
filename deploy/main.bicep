@@ -1,4 +1,10 @@
 param nginxContainerTag string
+@description('ACR User')
+@secure()
+param containerUsername string
+@description('Password for ACR')
+@secure()
+param containerPassword string
 
 @description('Main App Service Plan.')
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
@@ -19,14 +25,13 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
 resource webApp 'Microsoft.Web/sites@2023-01-01' = {
   name: 'ai-prod-webapp'
   location: resourceGroup().location
-  identity: {
-    type: 'SystemAssigned'
-  }
   kind: 'app,linux'
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
       linuxFxVersion: 'sitecontainers'
+      // Explicitly disabling managed identity for ACR
+      acrUseManagedIdentityCreds: false
     }
   }
 }
@@ -36,10 +41,12 @@ resource nginxContainer 'Microsoft.Web/sites/sitecontainers@2024-04-01' = {
   parent: webApp
   name: 'nginx'
   properties: {
+    userName: containerUsername
+    passwordSecret: containerPassword
     image: 'intrinsicweb.azurecr.io/intrinsicweb/configured-nginx:${nginxContainerTag}'
     isMain: true
     targetPort: '80'
-    authType: 'SystemIdentity'
+    authType: 'UserCredentials'
     // environmentVariables: [
     //   {
     //     name: 'NGINX_ENV_VAR'
@@ -62,13 +69,6 @@ resource ollamaContainer 'Microsoft.Web/sites/sitecontainers@2024-04-01' = {
     //     value: 'example-value' // Replace with any required environment variables
     //   }
     // ]
-  }
-}
-
-module roleAssignment 'assignRoleToPrincipal.bicep' = {
-  name: 'assign-acrpull-role-to-ai-webapp'
-  params: {
-    principalId: webApp.identity.principalId
   }
 }
 

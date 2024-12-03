@@ -1,4 +1,4 @@
-name: Deploy Bicep file
+name: Deploy AI Server
 on: [workflow_dispatch]
 
 jobs:
@@ -15,14 +15,14 @@ jobs:
       uses: docker/login-action@v2
       with:
         registry: https://intrinsicweb.azurecr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername }}
-        password: ${{ secrets.AzureAppService_ContainerPassword }}
+        username: ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME }}
+        password: ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: intrinsicweb.azurecr.io/${{ secrets.AzureAppService_ContainerUsername }}/configured-nginx:${{ github.sha }}
+        tags: intrinsicweb.azurecr.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME }}/configured-nginx:${{ github.sha }}
         file: ./Dockerfile
 
   build-and-deploy:
@@ -47,7 +47,7 @@ jobs:
         resourceGroupName: ${{ secrets.AZURE_RG }}
         template: ./deploy/main.bicep
         failOnStdErr: false
-        parameters: nginxContainerTag=${{ github.sha }}
+        parameters: 'nginxContainerTag=${{ github.sha }} containerUsername=${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME }} containerPassword=${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD }}'
       
     outputs:
       aiWebAppHost: ${{ steps.deployOllama.outputs.aiWebAppHost }}
