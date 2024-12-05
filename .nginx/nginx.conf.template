@@ -1,6 +1,4 @@
 server {
-    server_name intrinsic-michal-turczyn.azurewebsites.net
-
     listen 80;
     
     # DNS Resolver for dynamic upstreams

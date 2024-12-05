@@ -63,12 +63,12 @@ resource ollamaContainer 'Microsoft.Web/sites/sitecontainers@2024-04-01' = {
   properties: {
     image: 'ollama/ollama:latest'
     isMain: false
-    // environmentVariables: [
-    //   {
-    //     name: 'OLLAMA_ENV_VAR'
-    //     value: 'example-value' // Replace with any required environment variables
-    //   }
-    // ]
+    environmentVariables: [
+      {
+        name: 'OLLAMA_ORIGINS'
+        value: 'https://intrinsic-michal-turczyn.azurewebsites.net'
+      }
+    ]
   }
 }
 

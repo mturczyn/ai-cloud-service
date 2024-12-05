@@ -1,7 +1,7 @@
 # 1. For Nginx setup
 FROM nginx:latest
 
-ARG ollama_host_name=localhost
+ARG ollama_host_name=ollama
 ENV OLLAMA_HOST_NAME=$ollama_host_name
 
 # Copy NGINX configuration template into the container
