@@ -1,0 +1,36 @@
+server {
+    listen 80;
+    
+    # DNS Resolver for dynamic upstreams
+    # Docker's internal DNS resolver
+    resolver 127.0.0.11 valid=0s;
+
+    location ~ ^/api/(tags|pull|generate)$ {
+        # Handle OPTIONS preflight requests
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+            add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type';
+            add_header 'Access-Control-Max-Age' 86400;
+            return 204;
+        }
+
+        # Verify Authorization for other methods
+        if ($http_authorization != "Bearer 1234") {
+            return 404;
+        }
+        
+        # This is to ensure streaming responses are working.
+        proxy_buffering off;
+        chunked_transfer_encoding on;
+
+        # Proxy pass to the backend
+        proxy_pass http://$OLLAMA_HOST_NAME:11434$request_uri;
+        proxy_set_header Host localhost:11434;
+    }
+
+    # Default: Return 404 for all other endpoints
+    location / {
+        return 404;
+    }
+}
