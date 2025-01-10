@@ -43,7 +43,7 @@ resource nginxContainer 'Microsoft.Web/sites/sitecontainers@2024-04-01' = {
   properties: {
     userName: containerUsername
     passwordSecret: containerPassword
-    image: 'intrinsicweb.azurecr.io/intrinsicweb/configured-nginx:${nginxContainerTag}'
+    image: 'intrinsicweb.azurecr.io/ollama-nginx:${nginxContainerTag}'
     isMain: true
     targetPort: '80'
     authType: 'UserCredentials'

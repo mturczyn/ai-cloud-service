@@ -22,7 +22,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: intrinsicweb.azurecr.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME }}/configured-nginx:${{ github.sha }}
+        tags: intrinsicweb.azurecr.io/ollama-nginx:${{ github.sha }}
         file: ./Dockerfile
         build-args: ollama_host_name=localhost
 
