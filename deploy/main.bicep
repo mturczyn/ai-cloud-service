@@ -1,5 +1,5 @@
 @description('Full name (with image name and tag) to docker image.')
-param dockerImageFullName string
+param dockerImageName string
 
 @description('Main App Service Plan.')
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
@@ -36,10 +36,9 @@ resource nginxContainer 'Microsoft.Web/sites/sitecontainers@2024-04-01' = {
   parent: webApp
   name: 'nginx'
   properties: {
-    image: dockerImageFullName
+    image: dockerImageName
     isMain: true
     targetPort: '80'
-    authType: 'UserCredentials'
     // environmentVariables: [
     //   {
     //     name: 'NGINX_ENV_VAR'
