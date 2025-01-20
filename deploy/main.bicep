@@ -1,10 +1,5 @@
-param nginxContainerTag string
-@description('ACR User')
-@secure()
-param containerUsername string
-@description('Password for ACR')
-@secure()
-param containerPassword string
+@description('Full name (with image name and tag) to docker image.')
+param dockerImageFullName string
 
 @description('Main App Service Plan.')
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
@@ -41,9 +36,7 @@ resource nginxContainer 'Microsoft.Web/sites/sitecontainers@2024-04-01' = {
   parent: webApp
   name: 'nginx'
   properties: {
-    userName: containerUsername
-    passwordSecret: containerPassword
-    image: 'intrinsicweb.azurecr.io/ollama-nginx:${nginxContainerTag}'
+    image: dockerImageFullName
     isMain: true
     targetPort: '80'
     authType: 'UserCredentials'

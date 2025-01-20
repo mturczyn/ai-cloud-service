@@ -1,6 +1,9 @@
 name: Remove AI Resources
 on: [workflow_dispatch]
 
+env:
+  AZURE_RESOURCEGROUP_NAME: intrinsic-rg
+
 jobs:
   remove-ai-resources:
     runs-on: ubuntu-latest
@@ -15,5 +18,5 @@ jobs:
       with:
         azcliversion: latest
         inlineScript: |
-          az resource delete --resource-group ${{ secrets.AZURE_RG }} --name ai-prod-webapp --resource-type 'Microsoft.Web/sites'
-          az resource delete --resource-group ${{ secrets.AZURE_RG }} --name ai-prod-asp --resource-type 'Microsoft.Web/serverfarms'
+          az resource delete --resource-group ${{ env.AZURE_RESOURCEGROUP_NAME }} --name ai-prod-webapp --resource-type 'Microsoft.Web/sites'
+          az resource delete --resource-group ${{ env.AZURE_RESOURCEGROUP_NAME }} --name ai-prod-asp --resource-type 'Microsoft.Web/serverfarms'
