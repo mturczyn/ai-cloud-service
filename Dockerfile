@@ -13,7 +13,7 @@ RUN apt-get update && \
     && apt-get clean
 
 # Configure SSH
-RUN mkdir /var/run/sshd
+RUN mkdir -p /var/run/sshd
 
 # Set root password (CHANGE THIS!)
 RUN echo 'root:root' | chpasswd
@@ -23,6 +23,7 @@ RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/
 
 # Optional: avoid PAM issues
 RUN sed -i 's@session\s\+required\s\+pam_loginuid.so@session optional pam_loginuid.so@g' /etc/pam.d/sshd
+RUN sed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config
 
 # Copy NGINX template
 COPY .nginx/nginx.conf.template /etc/nginx/templates/nginx.conf.template
